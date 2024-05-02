@@ -1,0 +1,28 @@
+git add dist && git commit -m "Initial dist subtree commit"
+Add below to package.json scripts in order to publish to git website
+  -     "ghPage": "git subtree push --prefix dist origin gh-pages"
+
+after git add
+ git subtree push --prefix dist origin gh-pages 
+
+
+
+npm run watch
+
+npx prettier . --check
+
+change package.josn  'names:slideshow' then npm install(?)
+how to update npms
+
+
+node file
+or
+npm install nodemon --save-dev  (save dev?)
+nodemon file
+
+"scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "start": "nodemon script.js"   
+  },
+
+  in package.jsosn, then npm start
