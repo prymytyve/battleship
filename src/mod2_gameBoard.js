@@ -19,10 +19,12 @@ export default class Gameboard {
 
   placeShip = (shipObj, [i, j], orientation) => {
     if (orientation === "horizontal") {
+      if (shipObj.length - 1 + j > 9) throw new Error("Invalid");
       for (let n = 0; n < shipObj.length; n++) {
         this.gameBoard[i][j + n] = shipObj.shipName;
       }
     } else if ((orientation = "vertical")) {
+      if (shipObj.length - 1 + i > 9) throw new Error("Invalid");
       for (let n = 0; n < shipObj.length; n++) {
         this.gameBoard[i + n][j] = shipObj.shipName;
       }
@@ -30,3 +32,4 @@ export default class Gameboard {
   };
 }
 // if(shipObj.length)
+//gotta check spots before placement

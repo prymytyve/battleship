@@ -42,6 +42,18 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
     expect(testBoard.gameBoard[4][0]).toContain("Carrier");
   });
 
+  test.only("will the ship fit", () => {
+    expect(() => {
+      testBoard.placeShip(carrier, [0, 6], "horizontal");
+    }).toThrow("Invalid");
+
+    expect(() => {
+      testBoard.placeShip(carrier, [6, 0], "vertical");
+    }).toThrow("Invalid");
+  });
+
+  test("ships will not overlap", () => {});
+
   test("multiple ships", () => {});
   test("hit or miss", () => {});
   test("whether or not all ships have been sunk", () => {});
