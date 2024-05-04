@@ -24,16 +24,22 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
   const carrier = new Ship("Carrier", 5);
   const coordinates = [0, 0];
 
-  // test("placing ship on board", () => {
-  //   testBoard.placeShip(carrier, coordinates);
-  // });
-
-  test("placing ship on board with respects to its length, horizontally", () => {
+  test.only("placing ship on board with respects to its length, horizontally", () => {
+    testBoard.placeShip(carrier, coordinates, "horizontal");
     expect(testBoard.gameBoard[0][0]).toContain("Carrier");
     expect(testBoard.gameBoard[0][1]).toContain("Carrier");
     expect(testBoard.gameBoard[0][2]).toContain("Carrier");
     expect(testBoard.gameBoard[0][3]).toContain("Carrier");
     expect(testBoard.gameBoard[0][4]).toContain("Carrier");
+  });
+
+  test.only("placing ship on board with respects to its length, vertically", () => {
+    testBoard.placeShip(carrier, coordinates, "vertical");
+    expect(testBoard.gameBoard[0][0]).toContain("Carrier");
+    expect(testBoard.gameBoard[1][0]).toContain("Carrier");
+    expect(testBoard.gameBoard[2][0]).toContain("Carrier");
+    expect(testBoard.gameBoard[3][0]).toContain("Carrier");
+    expect(testBoard.gameBoard[4][0]).toContain("Carrier");
   });
 
   test("multiple ships", () => {});
