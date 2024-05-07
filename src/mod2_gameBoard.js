@@ -69,17 +69,35 @@ export default class Gameboard {
     }
   };
 
+  checkForRemainingShips = () => {
+    const checkForObjects = (val) => typeof val === "object";
+    const checkThis = this.gameBoard.flat().some(checkForObjects);
+    return checkThis;
+  };
+
+  gameText = (shipObj, sunkCheck, anyShipsLeft) => {
+    let shipHitText = shipObj.shipName + " has been hit";
+    let shipSunkText = shipHitText + ". " + shipObj.shipName + " has sunk";
+    let gameOverMsg = shipSunkText + ". GAME OVER!";
+
+    if (sunkCheck === false) {
+      return shipHitText;
+    } else if (sunkCheck === true && anyShipsLeft === true) {
+      return shipSunkText;
+    } else if (sunkCheck === true && anyShipsLeft === false) {
+      return gameOverMsg;
+    }
+  };
+
   receiveAttack = ([x, y]) => {
     if (typeof this.gameBoard[x][y] === "object") {
       const ship = this.gameBoard[x][y];
       ship.hit();
       let sunkCheck = ship.isSunk();
-      let shipHitText = ship.shipName + " has been hit";
-      let shipSunkText = ship.shipName + " has sunk";
-      let text =
-        sunkCheck === false ? shipHitText : shipHitText + ". " + shipSunkText;
       this.gameBoard[x][y] = "X";
-      return text;
+      let remainingShipCheck =
+        sunkCheck === true ? this.checkForRemainingShips() : true;
+      return this.gameText(ship, sunkCheck, remainingShipCheck);
     } else if (this.gameBoard[x][y] === 0) {
       this.gameBoard[x][y] = "M";
       return "miss";

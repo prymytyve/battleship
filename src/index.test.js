@@ -1,10 +1,10 @@
 import Ship from "./mod1_shipClass";
 import Gameboard from "./mod2_gameBoard";
 
-test("Create ship object, and test hit and sunk methods", () => {
-  let carrier = new Ship(carrier, 5);
+test.only("Create ship object, and test hit and sunk methods", () => {
+  let carrier = new Ship("carrier", 5);
   expect(carrier).toEqual({
-    _shipName: "Carrier",
+    _shipName: "carrier",
     _length: 5,
     _numOfHits: 0,
     _isSunk: false,
@@ -233,9 +233,29 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
     );
   });
 
-  test("whether or not all ships have been sunk", () => {});
-  test("gameflow: board generates ships at an appropriate time", () => {});
+  test.only("whether or not all ships have been sunk", () => {
+    expect(testBoard.checkForRemainingShips()).toBeTruthy();
+    //remaining ships: carrier [1,0] - [5,0] ; battleship [0,6] - [0,9] & [1,1] - [4,1]
+    testBoard.receiveAttack([1, 0]);
+    testBoard.receiveAttack([2, 0]);
+    testBoard.receiveAttack([3, 0]);
+    testBoard.receiveAttack([4, 0]);
+    testBoard.receiveAttack([5, 0]);
+    testBoard.receiveAttack([0, 6]);
+    testBoard.receiveAttack([0, 7]);
+    testBoard.receiveAttack([0, 8]);
+    testBoard.receiveAttack([0, 9]);
+    testBoard.receiveAttack([1, 1]);
+    testBoard.receiveAttack([2, 1]);
+    testBoard.receiveAttack([3, 1]);
+    expect(testBoard.receiveAttack([4, 1])).toMatch(
+      "battleship has been hit. battleship has sunk. GAME OVER!"
+    );
+    expect(testBoard.checkForRemainingShips()).toBeFalsy();
+  });
 });
+
 ////////////////////////////////////////////////////////////////////
 /////////////////////  ////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
+
+//describe -> test with all ships as if real game
