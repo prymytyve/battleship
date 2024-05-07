@@ -51,7 +51,7 @@ export default class Gameboard {
       if (this.checkForOverlap(this.gameBoard[i], j, shipObj.length) === true)
         throw new Error("Ships can't overlap");
       for (let n = 0; n < shipObj.length; n++) {
-        this.gameBoard[i][j + n] = shipObj.shipName;
+        this.gameBoard[i][j + n] = shipObj;
       }
     } else if ((orientation = "vertical")) {
       if (shipObj.length - 1 + i > 9) throw new Error("Ship doesn't fit");
@@ -64,15 +64,22 @@ export default class Gameboard {
       )
         throw new Error("Ships can't overlap");
       for (let n = 0; n < shipObj.length; n++) {
-        this.gameBoard[i + n][j] = shipObj.shipName;
+        this.gameBoard[i + n][j] = shipObj;
       }
     }
   };
 
   receiveAttack = ([x, y]) => {
-    if (this.gameBoard[x][y] !== 0) return "hit";
-    if (this.gameBoard[x][y] === 0) return "miss";
+    if (typeof this.gameBoard[x][y] === "object") {
+      let text = this.gameBoard[x][y].shipName + " has been hit";
+      this.gameBoard[x][y].hit();
+      this.gameBoard[x][y] = "X";
+      return text;
+    } else if (this.gameBoard[x][y] === 0) {
+      this.gameBoard[x][y] = "M";
+      return "miss";
+    } else if (this.gameBoard[x][y] === "X" || this.gameBoard[x][y] === "M") {
+      return "void";
+    }
   };
 }
-//how to place ship
-//

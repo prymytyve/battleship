@@ -2,7 +2,7 @@ import Ship from "./mod1_shipClass";
 import Gameboard from "./mod2_gameBoard";
 
 test("Create ship object, and test hit and sunk methods", () => {
-  let carrier = new Ship("Carrier", 5);
+  let carrier = new Ship(carrier, 5);
   expect(carrier).toEqual({
     _shipName: "Carrier",
     _length: 5,
@@ -26,31 +26,31 @@ test("Create ship object, and test hit and sunk methods", () => {
 
 describe("Creating gameboard, and testing interactions with Ship class", () => {
   const testBoard = new Gameboard();
-  const carrier = new Ship("Carrier", 5);
+  const carrier = new Ship("carrier", 5);
   testBoard.placeShip(carrier, [0, 0], "horizontal");
   testBoard.placeShip(carrier, [1, 0], "vertical");
-  const battleship = new Ship("Battleship", 4);
+  const battleship = new Ship("battleship", 4);
 
   //////////////////////////////////////////////
 
   test.only("placing ship on board with respects to its length, horizontally", () => {
-    expect(testBoard.gameBoard[0][0]).toContain("Carrier");
-    expect(testBoard.gameBoard[0][1]).toContain("Carrier");
-    expect(testBoard.gameBoard[0][2]).toContain("Carrier");
-    expect(testBoard.gameBoard[0][3]).toContain("Carrier");
-    expect(testBoard.gameBoard[0][4]).toContain("Carrier");
-    expect(testBoard.gameBoard[0][5]).not.toContain("Carrier");
+    expect(testBoard.gameBoard[0][0]).toMatchObject(carrier);
+    expect(testBoard.gameBoard[0][1]).toMatchObject(carrier);
+    expect(testBoard.gameBoard[0][2]).toMatchObject(carrier);
+    expect(testBoard.gameBoard[0][3]).toMatchObject(carrier);
+    expect(testBoard.gameBoard[0][4]).toMatchObject(carrier);
+    expect(testBoard.gameBoard[0][5]).toBe(0);
   });
 
   ///////////////////////////////////////////////
 
   test.only("placing ship on board with respects to its length, vertically", () => {
-    expect(testBoard.gameBoard[1][1]).not.toContain("Carrier");
-    expect(testBoard.gameBoard[2][0]).toContain("Carrier");
-    expect(testBoard.gameBoard[3][0]).toContain("Carrier");
-    expect(testBoard.gameBoard[4][0]).toContain("Carrier");
-    expect(testBoard.gameBoard[5][0]).toContain("Carrier");
-    expect(testBoard.gameBoard[6][0]).not.toContain("Carrier");
+    expect(testBoard.gameBoard[1][1]).toBe(0);
+    expect(testBoard.gameBoard[2][0]).toMatchObject(carrier);
+    expect(testBoard.gameBoard[3][0]).toMatchObject(carrier);
+    expect(testBoard.gameBoard[4][0]).toMatchObject(carrier);
+    expect(testBoard.gameBoard[5][0]).toMatchObject(carrier);
+    expect(testBoard.gameBoard[6][0]).toBe(0);
   });
 
   ////////////////////////////////////////////////
@@ -69,11 +69,11 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
   test.only("preventing overlaps. horizontally", () => {
     expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
       expect.arrayContaining([
-        "Carrier",
-        "Carrier",
-        "Carrier",
-        "Carrier",
-        "Carrier",
+        carrier,
+        carrier,
+        carrier,
+        carrier,
+        carrier,
         0,
         0,
         0,
@@ -100,16 +100,16 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
 
     expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
       expect.arrayContaining([
-        "Carrier",
-        "Carrier",
-        "Carrier",
-        "Carrier",
-        "Carrier",
+        carrier,
+        carrier,
+        carrier,
+        carrier,
+        carrier,
         0,
-        "Battleship",
-        "Battleship",
-        "Battleship",
-        "Battleship",
+        battleship,
+        battleship,
+        battleship,
+        battleship,
       ])
     );
   });
@@ -119,12 +119,12 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
   test.only("preventing overlaps, vertically", () => {
     expect(testBoard.returnArrayVert(testBoard.gameBoard, 0)).toEqual(
       expect.arrayContaining([
-        "Carrier",
-        "Carrier",
-        "Carrier",
-        "Carrier",
-        "Carrier",
-        "Carrier",
+        carrier,
+        carrier,
+        carrier,
+        carrier,
+        carrier,
+        carrier,
         0,
         0,
         0,
@@ -158,11 +158,11 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
 
     expect(testBoard.returnArrayVert(testBoard.gameBoard, 1)).toEqual(
       expect.arrayContaining([
-        "Carrier",
-        "Battleship",
-        "Battleship",
-        "Battleship",
-        "Battleship",
+        carrier,
+        battleship,
+        battleship,
+        battleship,
+        battleship,
         0,
         0,
         0,
@@ -175,24 +175,43 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
   /////////////////////////////////////////////////////////////////
 
   test.only("hit or miss", () => {
-    expect(testBoard.receiveAttack([0, 0])).toBe("hit");
-    expect(testBoard.receiveAttack([9, 9])).toBe("miss");
+    expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
+      expect.arrayContaining([
+        carrier,
+        carrier,
+        carrier,
+        carrier,
+        carrier,
+        0,
+        battleship,
+        battleship,
+        battleship,
+        battleship,
+      ])
+    );
+
+    expect(testBoard.receiveAttack([0, 0])).toMatch("carrier has been hit");
+    expect(testBoard.receiveAttack([0, 5])).toBe("miss");
+    expect(testBoard.receiveAttack([0, 0])).toMatch("void");
 
     expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
       expect.arrayContaining([
-        "Carrier",
-        "Carrier",
-        "Carrier",
-        "Carrier",
-        "Carrier",
-        0,
-        "Battleship",
-        "Battleship",
-        "Battleship",
-        "Battleship",
+        "X",
+        carrier,
+        carrier,
+        carrier,
+        carrier,
+        "M",
+        battleship,
+        battleship,
+        battleship,
+        battleship,
       ])
     );
+
+    expect(carrier.numOfHits).toEqual(1);
   });
+
   test("whether or not all ships have been sunk", () => {});
   test("gameflow: board generates ships at an appropriate time", () => {});
 });
