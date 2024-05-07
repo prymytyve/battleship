@@ -174,8 +174,27 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
 
   /////////////////////////////////////////////////////////////////
 
-  test("hit or miss", () => {});
+  test.only("hit or miss", () => {
+    expect(testBoard.receiveAttack([0, 0])).toBe("hit");
+    expect(testBoard.receiveAttack([9, 9])).toBe("miss");
+
+    expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
+      expect.arrayContaining([
+        "Carrier",
+        "Carrier",
+        "Carrier",
+        "Carrier",
+        "Carrier",
+        0,
+        "Battleship",
+        "Battleship",
+        "Battleship",
+        "Battleship",
+      ])
+    );
+  });
   test("whether or not all ships have been sunk", () => {});
+  test("gameflow: board generates ships at an appropriate time", () => {});
 });
 ////////////////////////////////////////////////////////////////////
 /////////////////////  ////////////////////////////////////////////

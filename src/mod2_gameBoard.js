@@ -68,4 +68,11 @@ export default class Gameboard {
       }
     }
   };
+
+  receiveAttack = ([x, y]) => {
+    if (this.gameBoard[x][y] !== 0) return "hit";
+    if (this.gameBoard[x][y] === 0) return "miss";
+  };
 }
+//how to place ship
+//
