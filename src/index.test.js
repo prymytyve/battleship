@@ -1,7 +1,7 @@
 import Ship from "./mod1_shipClass";
 import Gameboard from "./mod2_gameBoard";
 
-test.only("Create ship object, and test hit and sunk methods", () => {
+test("Create ship object, and test hit and sunk methods", () => {
   let carrier = new Ship("carrier", 5);
   expect(carrier).toEqual({
     _shipName: "carrier",
@@ -30,10 +30,8 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
   testBoard.placeShip(carrier, [0, 0], "horizontal");
   testBoard.placeShip(carrier, [1, 0], "vertical");
   const battleship = new Ship("battleship", 4);
-
   //////////////////////////////////////////////
-
-  test.only("placing ship on board with respects to its length, horizontally", () => {
+  test("placing ship on board with respects to its length, horizontally", () => {
     expect(testBoard.gameBoard[0][0]).toMatchObject(carrier);
     expect(testBoard.gameBoard[0][1]).toMatchObject(carrier);
     expect(testBoard.gameBoard[0][2]).toMatchObject(carrier);
@@ -41,10 +39,8 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
     expect(testBoard.gameBoard[0][4]).toMatchObject(carrier);
     expect(testBoard.gameBoard[0][5]).toBe(0);
   });
-
   ///////////////////////////////////////////////
-
-  test.only("placing ship on board with respects to its length, vertically", () => {
+  test("placing ship on board with respects to its length, vertically", () => {
     expect(testBoard.gameBoard[1][1]).toBe(0);
     expect(testBoard.gameBoard[2][0]).toMatchObject(carrier);
     expect(testBoard.gameBoard[3][0]).toMatchObject(carrier);
@@ -52,10 +48,8 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
     expect(testBoard.gameBoard[5][0]).toMatchObject(carrier);
     expect(testBoard.gameBoard[6][0]).toBe(0);
   });
-
   ////////////////////////////////////////////////
-
-  test.only("will the ship fit", () => {
+  test("will the ship fit", () => {
     expect(() => {
       testBoard.placeShip(carrier, [0, 6], "horizontal");
     }).toThrow("Ship doesn't fit");
@@ -63,10 +57,8 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
       testBoard.placeShip(carrier, [6, 0], "vertical");
     }).toThrow("Ship doesn't fit");
   });
-
   //////////////////////////////////////////////////
-
-  test.only("preventing overlaps. horizontally", () => {
+  test("preventing overlaps. horizontally", () => {
     expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
       expect.arrayContaining([
         carrier,
@@ -113,10 +105,8 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
       ])
     );
   });
-
   ////////////////////////////////////////////////////////////////
-
-  test.only("preventing overlaps, vertically", () => {
+  test("preventing overlaps, vertically", () => {
     expect(testBoard.returnArrayVert(testBoard.gameBoard, 0)).toEqual(
       expect.arrayContaining([
         carrier,
@@ -171,10 +161,8 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
       ])
     );
   });
-
   /////////////////////////////////////////////////////////////////
-
-  test.only("hit or miss", () => {
+  test("hit or miss", () => {
     expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
       expect.arrayContaining([
         carrier,
@@ -232,8 +220,8 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
       ])
     );
   });
-
-  test.only("whether or not all ships have been sunk", () => {
+  /////////////////////////////////////////////////////////////////
+  test("whether or not all ships have been sunk", () => {
     expect(testBoard.checkForRemainingShips()).toBeTruthy();
     //remaining ships: carrier [1,0] - [5,0] ; battleship [0,6] - [0,9] & [1,1] - [4,1]
     testBoard.receiveAttack([1, 0]);
@@ -256,6 +244,78 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
 });
 
 ////////////////////////////////////////////////////////////////////
-/////////////////////  ////////////////////////////////////////////
+///////////////////// Testing a round //////////////////////////////
+///////////////////////////////////////////////////////////////////
 
-//describe -> test with all ships as if real game
+describe.only("testing one round", () => {
+  const mockboard = new Gameboard();
+  const carrier = new Ship("carrier", 5);
+  const battleship = new Ship("battleship", 4);
+  const cruiser = new Ship("cruiser", 3);
+  const submarine = new Ship("submarine", 2);
+  const destroyer = new Ship("destroyer", 2);
+
+  //ship placement
+  test.only("all ships placed", () => {
+    mockboard.placeShip(carrier, [0, 5], "vertical");
+
+    expect(() => {
+      mockboard.placeShip(battleship, [3, 5], "vertical");
+    }).toThrow("Ships can't overlap");
+
+    mockboard.placeShip(battleship, [2, 0], "horizontal");
+
+    expect(() => {
+      mockboard.placeShip(cruiser, [0, 9], "horizontal");
+    }).toThrow("Ship doesn't fit");
+
+    mockboard.placeShip(cruiser, [7, 0], "horizontal");
+    mockboard.placeShip(submarine, [8, 8], "vertical");
+    mockboard.placeShip(destroyer, [8, 9], "vertical");
+  });
+
+  test.only("destroy everything", () => {
+    //annihilation
+    ////carrier////
+    expect(mockboard.receiveAttack([4, 5])).toMatch("carrier has been hit");
+    mockboard.receiveAttack([3, 5]);
+    mockboard.receiveAttack([2, 5]);
+    mockboard.receiveAttack([0, 5]);
+    expect(mockboard.receiveAttack([1, 5])).toMatch(
+      "carrier has been hit. carrier has sunk"
+    );
+
+    ////miss/////
+    expect(mockboard.receiveAttack([0, 0])).toBe("miss");
+
+    ////void = these coordinates are no longer available////
+    expect(mockboard.receiveAttack([0, 0])).toMatch("void");
+
+    ////battleship////
+    expect(mockboard.receiveAttack([2, 3])).toMatch("battleship has been hit");
+    mockboard.receiveAttack([2, 0]);
+    mockboard.receiveAttack([2, 1]);
+    expect(mockboard.receiveAttack([2, 2])).toMatch(
+      "battleship has been hit. battleship has sunk"
+    );
+
+    ////cruiser////
+    expect(mockboard.receiveAttack([7, 1])).toMatch("cruiser has been hit");
+    mockboard.receiveAttack([7, 2]);
+    expect(mockboard.receiveAttack([7, 0])).toMatch(
+      "cruiser has been hit. cruiser has sunk"
+    );
+
+    ////submarine////
+    expect(mockboard.receiveAttack([8, 8])).toMatch("submarine has been hit");
+    expect(mockboard.receiveAttack([9, 8])).toMatch(
+      "submarine has been hit. submarine has sunk"
+    );
+
+    //destroyer & game over////
+    expect(mockboard.receiveAttack([8, 9])).toMatch("destroyer has been hit");
+    expect(mockboard.receiveAttack([9, 9])).toMatch(
+      "destroyer has been hit. destroyer has sunk. GAME OVER!"
+    );
+  });
+});
