@@ -52,10 +52,10 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
   test("will the ship fit", () => {
     expect(() => {
       testBoard.placeShip(carrier, [0, 6], "horizontal");
-    }).toThrow("Ship doesn't fit");
+    }).toThrow("ship does not fit");
     expect(() => {
       testBoard.placeShip(carrier, [6, 0], "vertical");
-    }).toThrow("Ship doesn't fit");
+    }).toThrow("ship does not fit");
   });
   //////////////////////////////////////////////////
   test("preventing overlaps. horizontally", () => {
@@ -74,21 +74,13 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
       ])
     );
 
-    expect(
-      testBoard.checkForOverlap(testBoard.gameBoard[0], 5, carrier.length)
-    ).toBeFalsy();
-
-    expect(
-      testBoard.checkForOverlap(testBoard.gameBoard[0], 3, battleship.length)
-    ).toBeTruthy();
-
     expect(() => {
       testBoard.placeShip(carrier, [0, 0], "horizontal");
-    }).toThrow("Ships can't overlap");
+    }).toThrow("overlapping");
 
     expect(() => {
       testBoard.placeShip(battleship, [0, 6], "horizontal");
-    }).not.toThrow("Ship doesn't fit");
+    }).not.toThrow("ship does not fit");
 
     expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
       expect.arrayContaining([
@@ -122,29 +114,13 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
       ])
     );
 
-    expect(
-      testBoard.checkForOverlapVertically(
-        testBoard.gameBoard,
-        [3, 0],
-        carrier.length
-      )
-    ).toBeTruthy();
-
-    expect(
-      testBoard.checkForOverlapVertically(
-        testBoard.gameBoard,
-        [6, 0],
-        battleship.length
-      )
-    ).toBeFalsy();
-
     expect(() => {
       testBoard.placeShip(battleship, [0, 0], "vertical");
-    }).toThrow("Ships can't overlap");
+    }).toThrow("overlapping");
 
     expect(() => {
       testBoard.placeShip(battleship, [1, 1], "vertical");
-    }).not.toThrow("Ships can't overlap");
+    }).not.toThrow("overlapping");
 
     expect(testBoard.returnArrayVert(testBoard.gameBoard, 1)).toEqual(
       expect.arrayContaining([
@@ -222,7 +198,6 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
   });
   /////////////////////////////////////////////////////////////////
   test("whether or not all ships have been sunk", () => {
-    expect(testBoard.checkForRemainingShips()).toBeTruthy();
     //remaining ships: carrier [1,0] - [5,0] ; battleship [0,6] - [0,9] & [1,1] - [4,1]
     testBoard.receiveAttack([1, 0]);
     testBoard.receiveAttack([2, 0]);
@@ -239,7 +214,6 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
     expect(testBoard.receiveAttack([4, 1])).toMatch(
       "battleship has been hit. battleship has sunk. GAME OVER!"
     );
-    expect(testBoard.checkForRemainingShips()).toBeFalsy();
   });
 });
 
@@ -247,7 +221,7 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
 ///////////////////// Testing a round //////////////////////////////
 ///////////////////////////////////////////////////////////////////
 
-describe.only("testing one round", () => {
+describe("testing one round", () => {
   const mockboard = new Gameboard();
   const carrier = new Ship("carrier", 5);
   const battleship = new Ship("battleship", 4);
@@ -256,25 +230,25 @@ describe.only("testing one round", () => {
   const destroyer = new Ship("destroyer", 2);
 
   //ship placement
-  test.only("all ships placed", () => {
+  test("all ships placed", () => {
     mockboard.placeShip(carrier, [0, 5], "vertical");
 
     expect(() => {
       mockboard.placeShip(battleship, [3, 5], "vertical");
-    }).toThrow("Ships can't overlap");
+    }).toThrow("overlapping");
 
     mockboard.placeShip(battleship, [2, 0], "horizontal");
 
     expect(() => {
       mockboard.placeShip(cruiser, [0, 9], "horizontal");
-    }).toThrow("Ship doesn't fit");
+    }).toThrow("ship does not fit");
 
     mockboard.placeShip(cruiser, [7, 0], "horizontal");
     mockboard.placeShip(submarine, [8, 8], "vertical");
     mockboard.placeShip(destroyer, [8, 9], "vertical");
   });
 
-  test.only("destroy everything", () => {
+  test("destroy everything", () => {
     //annihilation
     ////carrier////
     expect(mockboard.receiveAttack([4, 5])).toMatch("carrier has been hit");

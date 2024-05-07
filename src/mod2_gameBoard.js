@@ -29,53 +29,53 @@ export default class Gameboard {
     return checkThese;
   };
 
-  checkForOverlap = (board, start, shipLength) => {
+  #checkForOverlap(board, start, shipLength) {
     const isNotEmpty = (val) => val !== 0;
     const end = start + shipLength;
     let checkThese = board.slice(start, end);
     return checkThese.some(isNotEmpty);
-  };
+  }
 
-  checkForOverlapVertically = (board, [i, j], shipLength) => {
+  #checkForOverlapVertically(board, [i, j], shipLength) {
     const isNotEmpty = (val) => val !== 0;
     let checkThese = [];
     for (let n = 0; n < shipLength; n++) {
       checkThese.push(board[i + n][j]);
     }
     return checkThese.some(isNotEmpty);
-  };
+  }
 
   placeShip = (shipObj, [i, j], orientation) => {
     if (orientation === "horizontal") {
-      if (shipObj.length - 1 + j > 9) throw new Error("Ship doesn't fit");
-      if (this.checkForOverlap(this.gameBoard[i], j, shipObj.length) === true)
-        throw new Error("Ships can't overlap");
+      if (shipObj.length - 1 + j > 9) throw new Error("ship does not fit");
+      if (this.#checkForOverlap(this.gameBoard[i], j, shipObj.length) === true)
+        throw new Error("overlapping");
       for (let n = 0; n < shipObj.length; n++) {
         this.gameBoard[i][j + n] = shipObj;
       }
     } else if ((orientation = "vertical")) {
-      if (shipObj.length - 1 + i > 9) throw new Error("Ship doesn't fit");
+      if (shipObj.length - 1 + i > 9) throw new Error("ship does not fit");
       if (
-        this.checkForOverlapVertically(
+        this.#checkForOverlapVertically(
           this.gameBoard,
           [i, j],
           shipObj.length
         ) === true
       )
-        throw new Error("Ships can't overlap");
+        throw new Error("overlapping");
       for (let n = 0; n < shipObj.length; n++) {
         this.gameBoard[i + n][j] = shipObj;
       }
     }
   };
 
-  checkForRemainingShips = () => {
+  #checkForRemainingShips = () => {
     const checkForObjects = (val) => typeof val === "object";
     const checkThis = this.gameBoard.flat().some(checkForObjects);
     return checkThis;
   };
 
-  gameText = (shipObj, sunkCheck, anyShipsLeft) => {
+  #gameText(shipObj, sunkCheck, anyShipsLeft) {
     let shipHitText = shipObj.shipName + " has been hit";
     let shipSunkText = shipHitText + ". " + shipObj.shipName + " has sunk";
     let gameOverMsg = shipSunkText + ". GAME OVER!";
@@ -87,7 +87,7 @@ export default class Gameboard {
     } else if (sunkCheck === true && anyShipsLeft === false) {
       return gameOverMsg;
     }
-  };
+  }
 
   receiveAttack = ([x, y]) => {
     if (typeof this.gameBoard[x][y] === "object") {
@@ -96,8 +96,8 @@ export default class Gameboard {
       let sunkCheck = ship.isSunk();
       this.gameBoard[x][y] = "X";
       let remainingShipCheck =
-        sunkCheck === true ? this.checkForRemainingShips() : true;
-      return this.gameText(ship, sunkCheck, remainingShipCheck);
+        sunkCheck === true ? this.#checkForRemainingShips() : true;
+      return this.#gameText(ship, sunkCheck, remainingShipCheck);
     } else if (this.gameBoard[x][y] === 0) {
       this.gameBoard[x][y] = "M";
       return "miss";
