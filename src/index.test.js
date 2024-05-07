@@ -210,6 +210,27 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
     );
 
     expect(carrier.numOfHits).toEqual(1);
+    testBoard.receiveAttack([0, 1]);
+    testBoard.receiveAttack([0, 2]);
+    testBoard.receiveAttack([0, 3]);
+    expect(testBoard.receiveAttack([0, 4])).toMatch(
+      "carrier has been hit. carrier has sunk"
+    );
+
+    expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
+      expect.arrayContaining([
+        "X",
+        "X",
+        "X",
+        "X",
+        "X",
+        "M", // test passes with 'X'(why?), but should only past with 'M'
+        battleship,
+        battleship,
+        battleship,
+        battleship,
+      ])
+    );
   });
 
   test("whether or not all ships have been sunk", () => {});

@@ -71,8 +71,13 @@ export default class Gameboard {
 
   receiveAttack = ([x, y]) => {
     if (typeof this.gameBoard[x][y] === "object") {
-      let text = this.gameBoard[x][y].shipName + " has been hit";
-      this.gameBoard[x][y].hit();
+      const ship = this.gameBoard[x][y];
+      ship.hit();
+      let sunkCheck = ship.isSunk();
+      let shipHitText = ship.shipName + " has been hit";
+      let shipSunkText = ship.shipName + " has sunk";
+      let text =
+        sunkCheck === false ? shipHitText : shipHitText + ". " + shipSunkText;
       this.gameBoard[x][y] = "X";
       return text;
     } else if (this.gameBoard[x][y] === 0) {
