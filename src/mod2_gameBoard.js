@@ -17,14 +17,14 @@ export default class Gameboard {
     this.gameBoard = boardCreate();
   }
 
-  returnArray = (board) => {
-    return board;
+  returnArray = (i) => {
+    return this.gameBoard[i];
   };
 
-  returnArrayVert = (board, j) => {
+  returnArrayVert = (j) => {
     let checkThese = [];
     for (let n = 0; n < 10; n++) {
-      checkThese.push(board[n][j]);
+      checkThese.push(this.gameBoard[n][j]);
     }
     return checkThese;
   };
