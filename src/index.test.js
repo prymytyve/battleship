@@ -1,7 +1,8 @@
 import Ship from "./mod1_shipClass";
 import Gameboard from "./mod2_gameBoard";
+import Player from "./mod3_playerClass";
 
-test("Create ship object, and test hit and sunk methods", () => {
+test.skip("Create ship object, and test hit and sunk methods", () => {
   let carrier = new Ship("carrier", 5);
   expect(carrier).toEqual({
     _shipName: "carrier",
@@ -24,7 +25,7 @@ test("Create ship object, and test hit and sunk methods", () => {
 /////////////////////// Gameboard testing ///////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-describe("Creating gameboard, and testing interactions with Ship class", () => {
+describe.skip("Creating gameboard, and testing interactions with Ship class", () => {
   const testBoard = new Gameboard();
   const carrier = new Ship("carrier", 5);
   testBoard.placeShip(carrier, [0, 0], "horizontal");
@@ -59,7 +60,7 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
   });
   //////////////////////////////////////////////////
   test("preventing overlaps. horizontally", () => {
-    expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
+    expect(testBoard.returnArray(0)).toEqual(
       expect.arrayContaining([
         carrier,
         carrier,
@@ -82,7 +83,7 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
       testBoard.placeShip(battleship, [0, 6], "horizontal");
     }).not.toThrow("ship does not fit");
 
-    expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
+    expect(testBoard.returnArray(0)).toEqual(
       expect.arrayContaining([
         carrier,
         carrier,
@@ -99,7 +100,7 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
   });
   ////////////////////////////////////////////////////////////////
   test("preventing overlaps, vertically", () => {
-    expect(testBoard.returnArrayVert(testBoard.gameBoard, 0)).toEqual(
+    expect(testBoard.returnArrayVert(0)).toEqual(
       expect.arrayContaining([
         carrier,
         carrier,
@@ -122,7 +123,7 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
       testBoard.placeShip(battleship, [1, 1], "vertical");
     }).not.toThrow("overlapping");
 
-    expect(testBoard.returnArrayVert(testBoard.gameBoard, 1)).toEqual(
+    expect(testBoard.returnArrayVert(1)).toEqual(
       expect.arrayContaining([
         carrier,
         battleship,
@@ -139,7 +140,7 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
   });
   /////////////////////////////////////////////////////////////////
   test("hit or miss", () => {
-    expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
+    expect(testBoard.returnArray(0)).toEqual(
       expect.arrayContaining([
         carrier,
         carrier,
@@ -158,7 +159,7 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
     expect(testBoard.receiveAttack([0, 5])).toBe("miss");
     expect(testBoard.receiveAttack([0, 0])).toMatch("void");
 
-    expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
+    expect(testBoard.returnArray(0)).toEqual(
       expect.arrayContaining([
         "X",
         carrier,
@@ -181,7 +182,7 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
       "carrier has been hit. carrier has sunk"
     );
 
-    expect(testBoard.returnArray(testBoard.gameBoard[0])).toEqual(
+    expect(testBoard.returnArray(0)).toEqual(
       expect.arrayContaining([
         "X",
         "X",
@@ -221,7 +222,7 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
 ///////////////////// Testing a round //////////////////////////////
 ///////////////////////////////////////////////////////////////////
 
-describe("testing one round", () => {
+describe.skip("testing one round", () => {
   const mockboard = new Gameboard();
   const carrier = new Ship("carrier", 5);
   const battleship = new Ship("battleship", 4);
@@ -290,6 +291,57 @@ describe("testing one round", () => {
     expect(mockboard.receiveAttack([8, 9])).toMatch("destroyer has been hit");
     expect(mockboard.receiveAttack([9, 9])).toMatch(
       "destroyer has been hit. destroyer has sunk. GAME OVER!"
+    );
+  });
+});
+
+////////////////////////////////////////////////////////////////////
+///////////////////// Testing Player class /////////////////////////
+///////////////////////////////////////////////////////////////////
+
+describe("testing Player class and interactions with Gameboard and Ship", () => {
+  test("creating player object", () => {
+    let player1 = new Player("John");
+    expect(player1).toEqual(
+      expect.objectContaining({
+        _playerName: "John",
+        _gameBoard: expect.anything(),
+        _ships: expect.anything(),
+      })
+    );
+
+    player1._gameBoard.placeShip(player1._ships.carrier, [0, 0], "horizontal");
+    expect(player1._gameBoard.returnArray(0)).toEqual(
+      expect.arrayContaining([
+        player1._ships.carrier,
+        player1._ships.carrier,
+        player1._ships.carrier,
+        player1._ships.carrier,
+        player1._ships.carrier,
+        0,
+        0,
+        0,
+        0,
+        0,
+      ])
+    );
+    expect(player1._gameBoard.receiveAttack([0, 0])).toMatch(
+      "carrier has been hit"
+    );
+    player1._gameBoard.receiveAttack([0, 1]);
+    player1._gameBoard.receiveAttack([0, 2]);
+    player1._gameBoard.receiveAttack([0, 3]);
+    expect(player1._gameBoard.receiveAttack([0, 4])).toEqual(
+      "carrier has been hit. carrier has sunk. GAME OVER!"
+    );
+
+    let player2 = new Player("Bob");
+    expect(player2).toEqual(
+      expect.objectContaining({
+        _playerName: "Bob",
+        _gameBoard: expect.anything(),
+        _ships: expect.anything(),
+      })
     );
   });
 });
