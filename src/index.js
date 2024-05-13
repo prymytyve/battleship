@@ -1,5 +1,6 @@
 import "./style.css";
 import Player from "./mod3_playerClass";
+import { shipHandler } from "./mod4_handlers";
 
 const gameBoardDisplay = document.querySelector(".gameBoard");
 
@@ -14,15 +15,35 @@ function generateGameBoard() {
     for (let j = 0; j < 10; j++) {
       const cell = document.createElement("td");
       cell.classList.add("cell");
-      const coordinates = [i, j];
-      cell.setAttribute("data", coordinates);
-      cell.addEventListener("click", () => {
-        console.log(cell.getAttribute("data"));
-        //add eventfunction here
+      cell.setAttribute("x", i);
+      cell.setAttribute("y", j);
+      cell.addEventListener("click", (e) => {
+        const x = Number(cell.getAttribute("x"));
+        const y = Number(cell.getAttribute("y"));
+        eventListenerStuff([x, y]);
       });
       row.appendChild(cell);
     }
     board.appendChild(row);
   }
   return board;
+}
+
+const joe = new Player("joe");
+joe.shipsArr = shipHandler();
+
+function eventListenerStuff(coordinates) {
+  gameFlow(joe, coordinates);
+}
+
+function gameFlow(player, coordinates) {
+  const board = player._game;
+  const ships = player.shipsArr;
+  if (ships.length > 0) {
+    let currShip = ships.shift();
+    board.placeShip(currShip, coordinates, "horizontal");
+    console.log(board.gameBoard);
+  } else {
+    console.log("complete");
+  }
 }
