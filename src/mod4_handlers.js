@@ -9,4 +9,19 @@ const shipHandler = () => {
   return [carrier, battleship, cruiser, submarine, destroyer];
 };
 
-export { shipHandler };
+const attack = (player, coordinates) => {
+  const game = player._game;
+  console.log(game.receiveAttack(coordinates));
+};
+
+function rngArray() {
+  let x = Math.round(Math.random() * 10);
+  let y = Math.round(Math.random() * 10);
+  return [x, y];
+}
+
+function rngNum() {
+  return Math.round(Math.random());
+}
+
+export { shipHandler, attack, rngArray, rngNum };
