@@ -16,19 +16,40 @@ const generateGameBoard = () => {
   return board;
 };
 
-function playerBoardToDom(playerBoard) {
+function itemHandler(val, cell) {
+  if (typeof val === "object") {
+    cell.textContent = val.shipName;
+    cell.classList.add(val.shipName);
+  } else if (typeof val === "string" && val !== "M") {
+    cell.classList.add("hit");
+  }
+}
+
+function displayShipsInDom(playerBoard, displayBoard) {
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
-      const thisCell = document.querySelector(`[x="${i}"][y="${j}"]`);
-      thisCell.textContent = itemHandler(playerBoard[i][j]);
+      const thisCell = displayBoard.querySelector(`[x="${i}"][y="${j}"]`);
+      itemHandler(playerBoard[i][j], thisCell);
     }
   }
 }
 
-function itemHandler(val) {
-  if (typeof val === "object") {
-    return val.shipName;
+function itemHandler2(val, cell) {
+  if (typeof val === "string" && val !== "M") {
+    cell.textContent = val;
+    cell.classList.add(val, "hit");
+  } else if (typeof val === "string" && val === "M") {
+    cell.classList.add("miss");
   }
 }
 
-export { generateGameBoard, playerBoardToDom };
+function displayHitsOrMiss(playerBoard, displayBoard) {
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      const thisCell = displayBoard.querySelector(`[x="${i}"][y="${j}"]`);
+      itemHandler2(playerBoard[i][j], thisCell);
+    }
+  }
+}
+
+export { generateGameBoard, displayHitsOrMiss, displayShipsInDom };

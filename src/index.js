@@ -1,11 +1,20 @@
 import "./style.css";
 import Player from "./mod3_playerClass";
-import { generateGameBoard, playerBoardToDom } from "./mod5_domStuff";
+import {
+  generateGameBoard,
+  gameBoardToDom,
+  displayHitsOrMiss,
+  displayShipsInDom,
+} from "./mod5_domStuff";
 
 const gameBoardDisplay = document.querySelector(".gameBoard");
-gameBoardDisplay.appendChild(generateGameBoard());
+const mainBoardDisplay = document.querySelector(".mainBoard");
+const subBoardDisplay = document.querySelector(".subBoard");
 
-const cells = document.querySelectorAll(".cell");
+mainBoardDisplay.appendChild(generateGameBoard());
+subBoardDisplay.appendChild(generateGameBoard());
+
+const cells = mainBoardDisplay.querySelectorAll(".cell");
 cells.forEach((cell) =>
   cell.addEventListener("click", (e) => {
     const x = Number(cell.getAttribute("x"));
@@ -15,17 +24,15 @@ cells.forEach((cell) =>
 );
 
 const joe = new Player("joe");
+const bob = new Player("Bob");
+joe.shipRandomize();
+bob.shipRandomize();
+displayShipsInDom(joe.playerBoard, mainBoardDisplay);
+displayHitsOrMiss(joe.playerBoard, subBoardDisplay);
 
 function gameStateFunc(coordinates) {
-  joe.placeShip(coordinates);
-  playerBoardToDom(joe.playerBoard);
-  console.log(joe.playerBoard);
+  const attack = joe._game.receiveAttack(coordinates);
+  console.log(attack, coordinates);
+  displayShipsInDom(joe.playerBoard, mainBoardDisplay);
+  displayHitsOrMiss(joe.playerBoard, subBoardDisplay);
 }
-
-function autoTest() {
-  const robo = new Player("robo");
-  robo.shipRandomize();
-  playerBoardToDom(robo.playerBoard);
-}
-
-autoTest();
