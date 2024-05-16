@@ -94,7 +94,7 @@ export default class Gameboard {
       const ship = this.gameBoard[x][y];
       ship.hit();
       let sunkCheck = ship.isSunk();
-      this.gameBoard[x][y] = "X";
+      this.gameBoard[x][y] = ship.shipName;
       let remainingShipCheck =
         sunkCheck === true ? this.#checkForRemainingShips() : true;
       return this.#gameText(ship, sunkCheck, remainingShipCheck);
