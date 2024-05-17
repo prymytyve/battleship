@@ -101,7 +101,7 @@ export default class Gameboard {
     } else if (this.gameBoard[x][y] === 0) {
       this.gameBoard[x][y] = "M";
       return "miss";
-    } else if (this.gameBoard[x][y] === "X" || this.gameBoard[x][y] === "M") {
+    } else if (typeof this.gameBoard[x][y] === "string") {
       return "void";
     }
   };

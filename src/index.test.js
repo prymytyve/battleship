@@ -161,7 +161,7 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
 
     expect(testBoard.returnArray(0)).toEqual(
       expect.arrayContaining([
-        "X",
+        "carrier",
         carrier,
         carrier,
         carrier,
@@ -184,11 +184,11 @@ describe("Creating gameboard, and testing interactions with Ship class", () => {
 
     expect(testBoard.returnArray(0)).toEqual(
       expect.arrayContaining([
-        "X",
-        "X",
-        "X",
-        "X",
-        "X",
+        "carrier",
+        "carrier",
+        "carrier",
+        "carrier",
+        "carrier",
         "M", // test passes with 'X'(why?), but should only past with 'M'
         battleship,
         battleship,
