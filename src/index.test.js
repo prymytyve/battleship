@@ -342,3 +342,58 @@ describe("testing Player class and interactions with Gameboard and Ship", () => 
     );
   });
 });
+
+///////////////////////////////////////////////////////////////////////////
+/////////////////////////////////game flow/////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+import { battle } from "./mod4_miscFuncs";
+
+describe.only("full game", () => {
+  const joe = new Player("joe");
+  const bob = new Player("bob");
+
+  joe.placeShip(joe.ships[4], [4, 0]);
+  bob.placeShip(bob.ships[4], [4, 0]);
+
+  test("2 players", () => {
+    let attacker = joe;
+    let defender = bob;
+
+    //1st atk joe
+    let thisBattle = battle(attacker, defender, [4, 0]);
+    if (thisBattle !== "void") {
+      let temp = attacker;
+      attacker = defender;
+      defender = temp;
+    }
+    expect(attacker._playerName).toEqual(bob._playerName);
+
+    // 2nd atk bob
+    thisBattle = battle(attacker, defender, [4, 0]);
+    expect(thisBattle).toEqual("destroyer has been hit");
+    if (thisBattle !== "void") {
+      let temp = attacker;
+      attacker = defender;
+      defender = temp;
+    }
+    expect(attacker._playerName).toEqual(joe._playerName);
+
+    //3rd atk is invallid, so shouldn't switch turns
+    thisBattle = battle(attacker, defender, [4, 0]);
+    expect(thisBattle).toEqual("void");
+    if (thisBattle !== "void") {
+      let temp = attacker;
+      attacker = defender;
+      defender = temp;
+    }
+    expect(attacker._playerName).toEqual(joe._playerName);
+
+    //4th atk (still joe's turn)
+    thisBattle = battle(attacker, defender, [4, 1]);
+    expect(thisBattle).toEqual(
+      "destroyer has been hit. destroyer has sunk. GAME OVER!"
+    );
+    // if(thisBattle)
+    expect(thisBattle.includes("GAME OVER!")).toBeTruthy();
+  });
+});

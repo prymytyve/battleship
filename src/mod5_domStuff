@@ -1,3 +1,8 @@
+const gameBoardDisplay = document.querySelector(".gameBoard");
+const mainBoardDisplay = document.querySelector(".mainBoard");
+const subBoardDisplay = document.querySelector(".subBoard");
+const turnInfo = document.querySelector(".turnInfo");
+
 const generateGameBoard = () => {
   const board = document.createElement("table");
   board.classList.add("gameBoard");
@@ -21,6 +26,7 @@ function itemHandler(val, cell) {
     cell.textContent = val.shipName;
     cell.classList.add(val.shipName);
   } else if (typeof val === "string" && val !== "M") {
+    cell.textContent = val;
     cell.classList.add("hit");
   }
 }
@@ -52,4 +58,25 @@ function displayHitsOrMiss(playerBoard, displayBoard) {
   }
 }
 
-export { generateGameBoard, displayHitsOrMiss, displayShipsInDom };
+function refresh(eventFn) {
+  mainBoardDisplay.replaceChildren(generateGameBoard());
+  subBoardDisplay.replaceChildren(generateGameBoard());
+  const cells = mainBoardDisplay.querySelectorAll(".cell");
+  if (eventFn) {
+    cells.forEach((cell) =>
+      cell.addEventListener("click", () => {
+        eventFn(cell);
+      })
+    );
+  }
+}
+
+function updateBoard(turnPlayer, opponent, eventFn) {
+  refresh(eventFn);
+  displayHitsOrMiss(opponent.playerBoard, mainBoardDisplay);
+  displayShipsInDom(turnPlayer.playerBoard, subBoardDisplay);
+}
+
+// function pageLoad() {}
+
+export { generateGameBoard, updateBoard };

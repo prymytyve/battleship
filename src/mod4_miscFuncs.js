@@ -1,4 +1,4 @@
-import Ship from "./mod1_shipClass";
+import Player from "./mod3_playerClass";
 
 function rngArray() {
   let x = Math.round(Math.random() * 10);
@@ -10,4 +10,13 @@ function rngNum() {
   return Math.round(Math.random());
 }
 
-export { rngArray, rngNum };
+function battle(attacker, defender, coordinates) {
+  const attack = defender._game.receiveAttack(coordinates);
+  if (attack !== "void") {
+    return attack;
+  } else if (attack === "void") {
+    return "void";
+  }
+}
+
+export { rngArray, rngNum, battle };
