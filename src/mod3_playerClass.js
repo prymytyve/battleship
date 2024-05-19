@@ -16,8 +16,13 @@ export default class Player {
   placeShip = (ship, coordinates, orientation = "horizontal") => {
     try {
       this._game.placeShip(ship, coordinates, orientation);
+      let spliceThis = this.ships.findIndex(
+        (i) => i.shipName === ship.shipName
+      );
+      this.ships.splice(spliceThis, 1);
     } catch (e) {
-      return [ship.shipName, e];
+      // return [ship.shipName, e];
+      throw e.message;
     }
   };
 
