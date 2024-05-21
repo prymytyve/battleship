@@ -2,6 +2,7 @@ const gameBoardDisplay = document.querySelector(".gameBoard");
 const mainBoardDisplay = document.querySelector(".mainBoard");
 const subBoardDisplay = document.querySelector(".subBoard");
 const turnInfo = document.querySelector(".turnInfo");
+const dialog = document.querySelector("dialog");
 
 const generateGameBoard = () => {
   const board = document.createElement("table");
@@ -21,6 +22,15 @@ const generateGameBoard = () => {
   return board;
 };
 
+function shipsDisplay(playerBoard, displayBoard) {
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      const thisCell = displayBoard.querySelector(`[x="${i}"][y="${j}"]`);
+      itemHandler(playerBoard[i][j], thisCell);
+    }
+  }
+}
+
 function itemHandler(val, cell) {
   if (typeof val === "object") {
     cell.textContent = val.shipName;
@@ -31,11 +41,11 @@ function itemHandler(val, cell) {
   }
 }
 
-function displayShipsInDom(playerBoard, displayBoard) {
+function attacksDisplay(playerBoard, displayBoard) {
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
       const thisCell = displayBoard.querySelector(`[x="${i}"][y="${j}"]`);
-      itemHandler(playerBoard[i][j], thisCell);
+      itemHandler2(playerBoard[i][j], thisCell);
     }
   }
 }
@@ -49,34 +59,61 @@ function itemHandler2(val, cell) {
   }
 }
 
-function displayHitsOrMiss(playerBoard, displayBoard) {
-  for (let i = 0; i < 10; i++) {
-    for (let j = 0; j < 10; j++) {
-      const thisCell = displayBoard.querySelector(`[x="${i}"][y="${j}"]`);
-      itemHandler2(playerBoard[i][j], thisCell);
-    }
-  }
-}
-
-function refresh(eventFn) {
+function updateDisplays4Battle(turnPlayer, opponent) {
   mainBoardDisplay.replaceChildren(generateGameBoard());
   subBoardDisplay.replaceChildren(generateGameBoard());
+  attacksDisplay(opponent.playerBoard, mainBoardDisplay);
+  shipsDisplay(turnPlayer.playerBoard, subBoardDisplay);
+}
+
+function popUp(callbackFn, ...args) {
+  const infoBlock = document.createElement("div");
+  infoBlock.classList.add("infoBlock");
+  const startTurnBtn = document.createElement("button");
+  startTurnBtn.textContent = "ok";
+  startTurnBtn.addEventListener("click", (e) => {
+    e.preventDefault;
+    callbackFn();
+    dialog.close();
+  });
+  args.forEach((arg) => {
+    const p = document.createElement("p");
+    p.textContent = arg;
+    infoBlock.appendChild(p);
+  });
+  infoBlock.appendChild(startTurnBtn);
+  dialog.replaceChildren(infoBlock);
+  dialog.showModal();
+}
+
+function addEventFnToCell(callback) {
   const cells = mainBoardDisplay.querySelectorAll(".cell");
-  if (eventFn) {
-    cells.forEach((cell) =>
-      cell.addEventListener("click", () => {
-        eventFn(cell);
-      })
-    );
-  }
+  cells.forEach((cell) =>
+    cell.addEventListener("click", () => {
+      const x = Number(cell.getAttribute("x"));
+      const y = Number(cell.getAttribute("y"));
+      const coordinates = [x, y];
+      callback(cell, coordinates);
+    })
+  );
 }
 
-function updateBoard(turnPlayer, opponent, eventFn) {
-  refresh(eventFn);
-  displayHitsOrMiss(opponent.playerBoard, mainBoardDisplay);
-  displayShipsInDom(turnPlayer.playerBoard, subBoardDisplay);
+function buttonCreator(text, callbackFn) {
+  const thisButton = document.createElement("button");
+  thisButton.textContent = text;
+  thisButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    callbackFn();
+  });
+  return thisButton;
 }
 
-// function pageLoad() {}
-
-export { generateGameBoard, updateBoard };
+export {
+  generateGameBoard,
+  updateDisplays4Battle,
+  attacksDisplay,
+  shipsDisplay,
+  popUp,
+  addEventFnToCell,
+  buttonCreator,
+};

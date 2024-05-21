@@ -1,65 +1,113 @@
 import "./style.css";
 import Player from "./mod3_playerClass";
-import { generateGameBoard, updateBoard } from "./mod5_domStuff";
+import {
+  generateGameBoard,
+  updateDisplays4Battle,
+  shipsDisplay,
+  popUp,
+  addEventFnToCell,
+  buttonCreator,
+} from "./mod5_domStuff";
 import { battle } from "./mod4_miscFuncs";
 
-const gameBoardDisplay = document.querySelector(".gameBoard");
 const mainBoardDisplay = document.querySelector(".mainBoard");
-const subBoardDisplay = document.querySelector(".subBoard");
 const turnInfo = document.querySelector(".turnInfo");
+const dialog = document.querySelector("dialog");
+const start = document.querySelector("#start");
+const player1 = document.querySelector("#player1");
+const player2 = document.querySelector("#player2");
 
-function eventFn(cell) {
-  const x = Number(cell.getAttribute("x"));
-  const y = Number(cell.getAttribute("y"));
-  gameHandler([x, y]);
+let currentPlayer = null;
+let defendingPlayer = null;
+
+function createPlayers() {
+  currentPlayer = new Player(player1.value);
+  defendingPlayer = new Player(player2.value);
+  dialog.close();
+  popUp(
+    shipPlacingHandler,
+    currentPlayer._playerName + "'s turn to place ships"
+  );
 }
 
-const cells = mainBoardDisplay.querySelectorAll(".cell");
-cells.forEach((cell) =>
-  cell.addEventListener("click", () => {
-    eventFn(cell);
-  })
-);
+start.appendChild(buttonCreator("start game", createPlayers));
 
-////////////////////////////////////////
-const joe = new Player("joe");
-const bob = new Player("Bob");
-joe.placeShip(joe.ships[3], [0, 0]);
-bob.placeShip(bob.ships[4], [0, 0]);
-let turnPlayer = joe;
-let defender = bob;
-//////////////////////////////////////
+function shipPlacingHandler() {
+  mainBoardDisplay.replaceChildren(generateGameBoard());
+  turnInfo.textContent = currentPlayer._playerName;
+  const finishBtn = buttonCreator("finish", handlerSwitch);
+  finishBtn.classList.add("finish");
+  finishBtn.disabled = true;
+  mainBoardDisplay.appendChild(finishBtn);
+  shipsDisplay(currentPlayer.playerBoard, mainBoardDisplay);
+  addEventFnToCell(placingShipsEvent);
+}
 
-////fist page load
-updateBoard(joe, bob, eventFn);
-turnInfo.textContent = turnPlayer._playerName + "'s Turn";
-
-////main function
-function gameHandler(coordinates) {
-  const thisBattle = battle(turnPlayer, defender, coordinates);
-  if (thisBattle !== "void" && !thisBattle.includes("GAME OVER!")) {
-    let temp = turnPlayer;
-    turnPlayer = defender;
-    defender = temp;
-    turnInfo.textContent = turnPlayer._playerName + "'s Turn";
-    updateBoard(turnPlayer, defender, eventFn);
-  } else if (thisBattle !== "void" && thisBattle.includes("GAME OVER!")) {
-    turnInfo.textContent = turnPlayer._playerName + " wins";
-    updateBoard(turnPlayer, defender);
-  } else {
-    console.log(thisBattle);
+function placingShipsEvent(thisCell, coordinates) {
+  const placement = currentPlayer.placeShip(
+    currentPlayer.ships[0],
+    coordinates
+  );
+  shipsDisplay(currentPlayer.playerBoard, mainBoardDisplay);
+  if (currentPlayer.ships.length === 0) {
+    const finishBtn = document.querySelector(".finish");
+    finishBtn.disabled = false;
   }
 }
 
-//transitionScreen(prevMessage){
-// text.content = prevMessage, players turn
-// create btn
-// btn.txt = start Turn
-//}
+function anyShipsLeft() {
+  return currentPlayer.ships.length !== 0 || defendingPlayer.ships.length !== 0
+    ? true
+    : false;
+}
 
-//if message returns anything other than void, button to submit :coordinates is enabled
-//ai checks playerBoard. objects are replaced with 0.
-//change player.placeShips. keep portion of it for randomize, but need another that accepts place ship args
-//come back and async funcs?
+function handlerSwitch() {
+  if (anyShipsLeft() === true) {
+    playerSwitch();
+    popUp(
+      shipPlacingHandler,
+      currentPlayer._playerName + "'s turn to place ships"
+    );
+  } else if (anyShipsLeft() === false) {
+    playerSwitch();
+    popUp(
+      battleHandler,
+      "Battle begins",
+      currentPlayer._playerName + "'s turn to attack"
+    );
+  }
+}
 
-//
+function playerSwitch() {
+  const temp = currentPlayer;
+  currentPlayer = defendingPlayer;
+  defendingPlayer = temp;
+}
+
+function battleHandler() {
+  updateDisplays4Battle(currentPlayer, defendingPlayer);
+  turnInfo.textContent = currentPlayer._playerName;
+  addEventFnToCell(battleEvent);
+}
+
+function battleEvent(thisCell, coordinates) {
+  const thisBattle = battle(currentPlayer, defendingPlayer, coordinates);
+  if (thisBattle !== "void" && !thisBattle.includes("GAME OVER!")) {
+    switchBoards(thisBattle);
+  } else if (thisBattle !== "void" && thisBattle.includes("GAME OVER!")) {
+    popUp(
+      placeHolder,
+      defendingPlayer._playerName + "'s " + thisBattle,
+      currentPlayer._playerName + " wins"
+    );
+  }
+}
+
+function switchBoards(battle) {
+  playerSwitch();
+  popUp(battleHandler, battle, currentPlayer._playerName + "'s turn to attack");
+}
+
+function placeHolder() {
+  location.reload();
+}

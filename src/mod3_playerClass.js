@@ -21,7 +21,6 @@ export default class Player {
       );
       this.ships.splice(spliceThis, 1);
     } catch (e) {
-      // return [ship.shipName, e];
       throw e.message;
     }
   };
@@ -47,7 +46,10 @@ function shipHandler() {
   const cruiser = new Ship("cruiser", 3);
   const submarine = new Ship("submarine", 2);
   const destroyer = new Ship("destroyer", 2);
-  return [carrier, battleship, cruiser, submarine, destroyer];
+  return [
+    // carrier, battleship, cruiser, submarine,
+    destroyer,
+  ];
 }
 
 function shipHandler2(amount = 1) {

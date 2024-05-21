@@ -49,7 +49,7 @@ export default class Gameboard {
     if (orientation === "horizontal") {
       if (shipObj.length - 1 + j > 9) throw new Error("ship does not fit");
       if (this.#checkForOverlap(this.gameBoard[i], j, shipObj.length) === true)
-        throw new Error("overlapping");
+        throw new Error("no overlapping");
       for (let n = 0; n < shipObj.length; n++) {
         this.gameBoard[i][j + n] = shipObj;
       }
@@ -62,7 +62,7 @@ export default class Gameboard {
           shipObj.length
         ) === true
       )
-        throw new Error("overlapping");
+        throw new Error("no overlapping");
       for (let n = 0; n < shipObj.length; n++) {
         this.gameBoard[i + n][j] = shipObj;
       }

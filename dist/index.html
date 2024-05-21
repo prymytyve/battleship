@@ -6,7 +6,21 @@
     <title>Battleship</title>
   </head>
   <body>
+    <dialog open>
+      <form method="dialog">
+        <ul>
+          <li><label for="player1">Player 1: </label><input type="text" id="player1" value="player 1"></li>
+          <!-- <ul class="aiOrPlayer">
+            <li><input type="radio"></li>
+            <li><input type="radio"></li>
+          </ul> -->
+          <li><label for="player2">Player 2: </label><input type="text" id="player2" value="player 2"></li>
+          <li id="start"></li>
+        </ul>
+      </form>
+    </dialog>
     <div class="mainWrapper">
+    <p class="turnInfo"></p>
         <div class="gameBoard mainBoard"></div>
         <div class="gameBoard subBoard"></div>
       </div>
